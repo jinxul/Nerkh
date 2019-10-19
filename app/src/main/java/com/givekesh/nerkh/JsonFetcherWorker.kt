@@ -5,7 +5,6 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.view.View
 import android.widget.RemoteViews
 import androidx.work.Worker
 import androidx.work.WorkerParameters
@@ -90,7 +89,6 @@ class JsonFetcherWorker(context: Context, workerParams: WorkerParameters) : Work
         )
         remoteView.setRemoteAdapter(R.id.widget_list, serviceIntent)
         remoteView.setEmptyView(R.id.widget_list, R.id.empty_layout)
-        remoteView.setViewVisibility(R.id.header_layout, View.VISIBLE)
         appWidgetManager.updateAppWidget(appWidgetId, remoteView)
     }
 

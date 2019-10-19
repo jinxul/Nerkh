@@ -19,8 +19,7 @@
         android:layout_height="wrap_content"
         android:background="@color/grey"
         android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:visibility="invisible">
+        android:paddingRight="5dp">
 
         <ImageView
             android:id="@+id/widget_refresh"

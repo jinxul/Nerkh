@@ -7,7 +7,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.view.View
 import android.widget.RemoteViews
 import androidx.work.*
 import java.util.concurrent.TimeUnit
@@ -73,8 +72,6 @@ class Nerkh : AppWidgetProvider() {
             )
             remoteView.setRemoteAdapter(R.id.widget_list, serviceIntent)
             remoteView.setEmptyView(R.id.widget_list, R.id.empty_layout)
-            remoteView.setViewVisibility(R.id.header_layout, View.VISIBLE)
-
             appWidgetManager.updateAppWidget(appWidgetId, remoteView)
         }
     }
