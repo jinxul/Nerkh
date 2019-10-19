@@ -51,11 +51,7 @@ class Nerkh : AppWidgetProvider() {
 
             val serviceIntent = Intent(context, AppWidgetService::class.java)
             serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-            serviceIntent.putExtra(
-                "json",
-                "[{\"name\":\"عنوان\", \"price\":\"قیمت\", \"change\":\"تغییر\"}," +
-                        json.replace("[", "")
-            )
+            serviceIntent.putExtra("json", json)
 
             serviceIntent.data =
                 Uri.parse(serviceIntent.toUri(Intent.URI_INTENT_SCHEME))

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="fields">
+        <item>l-price_dollar_rl</item>
+        <item>l-ons</item>
+        <item>l-mesghal</item>
+        <item>l-geram18</item>
+        <item>l-sekee</item>
+    </string-array>
+</resources>

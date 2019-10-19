@@ -5,16 +5,15 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.android.volley.Response
-import com.android.volley.toolbox.JsonArrayRequest
-import com.android.volley.toolbox.Volley
 import com.crashlytics.android.Crashlytics
 import org.json.JSONArray
+import org.json.JSONObject
+import org.jsoup.Jsoup
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -25,23 +24,35 @@ class JsonFetcherWorker(context: Context, workerParams: WorkerParameters) : Work
 
     override fun doWork(): Result {
         val context = applicationContext
-        val queue = Volley.newRequestQueue(context)
-        val url = "http://nerkh.orgfree.com/"
         val appWidgetManager = AppWidgetManager.getInstance(context)
         val appWidgetId = inputData.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, 17987)
         val remoteView = RemoteViews(context.packageName, R.layout.nerkh)
 
-        val request = JsonArrayRequest(
-            url,
-            Response.Listener<JSONArray> { response ->
+        try {
+            val document = Jsoup.connect("http://tgju.org/").get()
+            val jsonArray = JSONArray()
+            val header = JSONObject()
+            header.put("itemTitle", "عنوان")
+            header.put("currentPrice", "قیمت")
+            header.put("priceChanges", "تغییر")
+            jsonArray.put(header)
 
-                val serviceIntent = getServiceIntent(context, appWidgetId, response.toString())
+            val fields = context.resources.getStringArray(R.array.fields)
+            for (field in fields) {
+                val elements = document.getElementById(field)
+                val jsonObject = JSONObject()
+                jsonObject.put("itemTitle", elements.child(0).text())
+                jsonObject.put("currentPrice", elements.child(1).text())
+                jsonObject.put("priceChanges", elements.child(2).text())
+                jsonObject.put("changeIndicator", elements.attr("class"))
+                jsonArray.put(jsonObject)
+            }
+            if (jsonArray.length() > 1) {
+                val serviceIntent = getServiceIntent(context, appWidgetId, jsonArray.toString())
                 val lastUpdate = context.resources.getString(
                     R.string.last_update,
                     SimpleDateFormat("hh:mm:ss a", Locale.US).format(Date())
                 )
-                Log.e("TAG", response.toString())
-
                 refreshUI(
                     context,
                     remoteView,
@@ -50,29 +61,17 @@ class JsonFetcherWorker(context: Context, workerParams: WorkerParameters) : Work
                     serviceIntent,
                     appWidgetManager
                 )
-            },
-            Response.ErrorListener { VolleyError ->
-                if (!VolleyError.toString().contains("java.net.UnknownHostException"))
-                    Crashlytics.logException(VolleyError.cause)
-
-                val json =
-                    context.assets.open("defaultJson.json").bufferedReader()
-                        .use { it.readText() }
-                val serviceIntent = getServiceIntent(context, appWidgetId, json)
-
-                refreshUI(
-                    context,
-                    remoteView,
-                    "",
-                    appWidgetId,
-                    serviceIntent,
-                    appWidgetManager
-                )
-
-            })
-        queue.add(request)
-
-        return Result.success()
+                return Result.success()
+            }
+        } catch (exception: Exception) {
+            Crashlytics.logException(exception)
+        }
+        val json =
+            context.assets.open("defaultJson.json").bufferedReader()
+                .use { it.readText() }
+        val serviceIntent = getServiceIntent(context, appWidgetId, json)
+        refreshUI(context, remoteView, "", appWidgetId, serviceIntent, appWidgetManager)
+        return Result.failure()
     }
 
     private fun refreshUI(
@@ -112,11 +111,7 @@ class JsonFetcherWorker(context: Context, workerParams: WorkerParameters) : Work
     private fun getServiceIntent(context: Context, appWidgetId: Int, json: String): Intent {
         val serviceIntent = Intent(context, AppWidgetService::class.java)
         serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-        serviceIntent.putExtra(
-            "json",
-            "[{\"name\":\"عنوان\", \"price\":\"قیمت\", \"change\":\"تغییر\"}," +
-                    json.replace("[", "")
-        )
+        serviceIntent.putExtra("json", json)
         serviceIntent.data =
             Uri.parse(serviceIntent.toUri(Intent.URI_INTENT_SCHEME))
         return serviceIntent

@@ -42,22 +42,19 @@ class ListViewRemoteViewsFactory(private val context: Context, private val items
     override fun getViewAt(position: Int): RemoteViews {
         val remoteView = RemoteViews(context.packageName, R.layout.nerkh_item)
         val listItem = items.getJSONObject(position)
-        var changes = listItem.optString("change", "---")
-        val color: Int
-        when {
-            changes.contains("low") -> {
-                color = ContextCompat.getColor(context, R.color.low)
-                changes = changes.replace("low", "")
+        val changeIndicator = listItem.optString("changeIndicator", "")
+        val color = when {
+            changeIndicator.contains("low") -> {
+                ContextCompat.getColor(context, R.color.low)
             }
-            changes.contains("high") -> {
-                color = ContextCompat.getColor(context, R.color.high)
-                changes = changes.replace("high", "")
+            changeIndicator.contains("high") -> {
+                ContextCompat.getColor(context, R.color.high)
             }
-            else -> color = ContextCompat.getColor(context, R.color.light)
+            else -> ContextCompat.getColor(context, R.color.light)
         }
-        remoteView.setTextViewText(R.id.title, listItem.optString("name", "---"))
-        remoteView.setTextViewText(R.id.price, listItem.optString("price", "---"))
-        remoteView.setTextViewText(R.id.changes, changes)
+        remoteView.setTextViewText(R.id.title, listItem.optString("itemTitle", "---"))
+        remoteView.setTextViewText(R.id.price, listItem.optString("currentPrice", "---"))
+        remoteView.setTextViewText(R.id.changes, listItem.optString("priceChanges", "---"))
         remoteView.setTextColor(R.id.price, color)
         remoteView.setTextColor(R.id.changes, color)
         return remoteView
