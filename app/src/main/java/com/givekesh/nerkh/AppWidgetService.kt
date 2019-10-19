@@ -23,7 +23,7 @@ class ListViewRemoteViewsFactory(private val context: Context, private val items
     }
 
     override fun getLoadingView(): RemoteViews? {
-        return null
+        return RemoteViews(context.packageName, R.layout.loading)
 
     }
 
