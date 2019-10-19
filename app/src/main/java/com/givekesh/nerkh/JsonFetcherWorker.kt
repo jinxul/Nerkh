@@ -70,7 +70,7 @@ class JsonFetcherWorker(context: Context, workerParams: WorkerParameters) : Work
                 .use { it.readText() }
         val serviceIntent = getServiceIntent(context, appWidgetId, json)
         refreshUI(context, remoteView, "", appWidgetId, serviceIntent, appWidgetManager)
-        return Result.failure()
+        return Result.retry()
     }
 
     private fun refreshUI(
