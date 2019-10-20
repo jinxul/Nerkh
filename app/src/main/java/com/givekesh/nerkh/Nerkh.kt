@@ -96,7 +96,7 @@ class Nerkh : AppWidgetProvider() {
             val data = workDataOf(AppWidgetManager.EXTRA_APPWIDGET_ID to appWidgetId)
 
             val request =
-                PeriodicWorkRequest.Builder(JsonFetcherWorker::class.java, 15, TimeUnit.MINUTES)
+                PeriodicWorkRequest.Builder(DataFetcherWorker::class.java, 15, TimeUnit.MINUTES)
                     .setInputData(data)
                     .setConstraints(constraints)
                     .setBackoffCriteria(BackoffPolicy.LINEAR, 15, TimeUnit.MINUTES)

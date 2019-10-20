@@ -16,7 +16,7 @@ import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
-class JsonFetcherWorker(context: Context, workerParams: WorkerParameters) : Worker(
+class DataFetcherWorker(context: Context, workerParams: WorkerParameters) : Worker(
     context,
     workerParams
 ) {
