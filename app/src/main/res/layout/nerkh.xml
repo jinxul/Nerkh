@@ -6,6 +6,7 @@
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp"
     android:background="@color/grey"
+    android:layoutDirection="ltr"
     android:paddingStart="4dp"
     android:paddingLeft="4dp"
     android:paddingTop="6dp"
@@ -57,5 +58,5 @@
         android:paddingRight="5dp"
         tools:listitem="@layout/nerkh_item" />
 
-    <include layout="@layout/loading"/>
+    <include layout="@layout/loading" />
 </RelativeLayout>

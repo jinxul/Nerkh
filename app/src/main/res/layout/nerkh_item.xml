@@ -5,6 +5,7 @@
     android:background="@color/grey"
     android:paddingTop="6dp"
     android:paddingBottom="6dp"
+    android:layoutDirection="ltr"
     android:weightSum="5">
 
     <TextView
