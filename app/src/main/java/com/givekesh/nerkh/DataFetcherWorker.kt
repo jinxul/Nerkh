@@ -28,7 +28,15 @@ class DataFetcherWorker(context: Context, workerParams: WorkerParameters) : Work
         val remoteView = RemoteViews(context.packageName, R.layout.nerkh)
 
         try {
-            val document = Jsoup.connect("http://tgju.org/").timeout(5000).get()
+            val url = "http://tgju.org/"
+            val response = Jsoup.connect(url)
+                .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36")
+                .timeout(5000)
+                .execute()
+            val cookies = response.cookies()
+            val document = Jsoup.connect(url)
+                .cookies(cookies)
+                .get()
             val jsonArray = JSONArray()
             val header = JSONObject()
             header.put("itemTitle", "عنوان")
