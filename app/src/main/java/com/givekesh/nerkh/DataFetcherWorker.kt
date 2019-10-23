@@ -9,12 +9,15 @@ import android.widget.RemoteViews
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.crashlytics.android.Crashlytics
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.json.JSONArray
 import org.json.JSONObject
 import org.jsoup.Jsoup
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class DataFetcherWorker(context: Context, workerParams: WorkerParameters) : Worker(
     context,
@@ -29,14 +32,19 @@ class DataFetcherWorker(context: Context, workerParams: WorkerParameters) : Work
 
         try {
             val url = "http://tgju.org/"
-            val response = Jsoup.connect(url)
-                .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36")
-                .timeout(5000)
-                .execute()
-            val cookies = response.cookies()
-            val document = Jsoup.connect(url)
-                .cookies(cookies)
-                .get()
+            val okHttpClient = OkHttpClient.Builder()
+                .connectTimeout(5000, TimeUnit.MILLISECONDS)
+                .readTimeout(2500, TimeUnit.MILLISECONDS)
+                .build()
+            val request = Request.Builder()
+                .url(url)
+                .header(
+                    "User-Agent",
+                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36"
+                )
+                .get().build()
+            val html = okHttpClient.newCall(request).execute().body().string()
+            val document = Jsoup.parse(html)
             val jsonArray = JSONArray()
             val header = JSONObject()
             header.put("itemTitle", "عنوان")

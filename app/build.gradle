@@ -10,8 +10,8 @@ android {
         applicationId "com.givekesh.nerkh"
         minSdkVersion 17
         targetSdkVersion 29
-        versionCode 102
-        versionName "1.0.2"
+        versionCode 103
+        versionName "1.0.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     kotlinOptions {
@@ -32,7 +32,7 @@ dependencies {
     implementation 'androidx.work:work-runtime-ktx:2.3.0-alpha02'
     implementation 'com.google.firebase:firebase-analytics:17.2.0'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
-    implementation 'com.google.firebase:firebase-perf:19.0.0'
+    implementation 'com.google.firebase:firebase-perf:19.0.1'
     implementation 'org.jsoup:jsoup:1.12.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
