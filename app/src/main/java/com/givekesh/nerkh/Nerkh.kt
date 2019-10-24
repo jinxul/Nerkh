@@ -102,7 +102,10 @@ class Nerkh : AppWidgetProvider() {
                     .setBackoffCriteria(BackoffPolicy.LINEAR, 15, TimeUnit.MINUTES)
                     .build()
 
-            workManager.enqueue(request)
+            workManager.enqueueUniquePeriodicWork(
+                "nerkh.widget.data_fetcher",
+                ExistingPeriodicWorkPolicy.REPLACE, request
+            )
         }
     }
 }
