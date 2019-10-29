@@ -31,7 +31,6 @@ class DataFetcherWorker(context: Context, workerParams: WorkerParameters) : Work
         val context = applicationContext
         val appWidgetManager = AppWidgetManager.getInstance(context)
         val appWidgetId = inputData.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, 17987)
-        val remoteView = RemoteViews(context.packageName, R.layout.nerkh)
 
         try {
             val url = "http://tgju.org/"
@@ -57,7 +56,6 @@ class DataFetcherWorker(context: Context, workerParams: WorkerParameters) : Work
                 )
                 refreshUI(
                     context,
-                    remoteView,
                     lastUpdate,
                     appWidgetId,
                     serviceIntent,
@@ -72,40 +70,42 @@ class DataFetcherWorker(context: Context, workerParams: WorkerParameters) : Work
             context.assets.open("defaultJson.json").bufferedReader()
                 .use { it.readText() }
         val serviceIntent = getServiceIntent(context, appWidgetId, json)
-        refreshUI(context, remoteView, "", appWidgetId, serviceIntent, appWidgetManager)
+        refreshUI(context, "", appWidgetId, serviceIntent, appWidgetManager)
         return Result.retry()
     }
 
     private fun refreshUI(
         context: Context,
-        remoteView: RemoteViews,
         lastUpdate: String,
         appWidgetId: Int,
         serviceIntent: Intent,
         appWidgetManager: AppWidgetManager
     ) {
-        remoteView.setTextViewText(R.id.last_update, lastUpdate)
+        RemoteViews(context.packageName, R.layout.nerkh).apply {
+            setTextViewText(R.id.last_update, lastUpdate)
 
-        remoteView.setOnClickPendingIntent(
-            R.id.widget_refresh,
-            getRefreshPending(context, appWidgetId)
-        )
-        remoteView.setOnClickPendingIntent(
-            R.id.widget_settings,
-            getConfigPending(context, appWidgetId)
-        )
-        remoteView.setRemoteAdapter(R.id.widget_list, serviceIntent)
-        remoteView.setEmptyView(R.id.widget_list, R.id.empty_layout)
-        appWidgetManager.updateAppWidget(appWidgetId, remoteView)
+            setOnClickPendingIntent(
+                R.id.widget_refresh,
+                getRefreshPending(context, appWidgetId)
+            )
+            setOnClickPendingIntent(
+                R.id.widget_settings,
+                getConfigPending(context, appWidgetId)
+            )
+            setRemoteAdapter(R.id.widget_list, serviceIntent)
+            setEmptyView(R.id.widget_list, R.id.empty_layout)
+            appWidgetManager.updateAppWidget(appWidgetId, this)
+        }
     }
 
     private fun getRefreshPending(
         context: Context,
         appWidgetId: Int
     ): PendingIntent {
-        val updateIntent = Intent(context, Nerkh::class.java)
-        updateIntent.action = "com.givekesh.nerkh.manual.refresh"
-        updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+        val updateIntent = Intent(context, Nerkh::class.java).apply {
+            action = "com.givekesh.nerkh.manual.refresh"
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+        }
 
         return PendingIntent.getBroadcast(
             context, appWidgetId,
@@ -114,8 +114,9 @@ class DataFetcherWorker(context: Context, workerParams: WorkerParameters) : Work
     }
 
     private fun getConfigPending(context: Context, appWidgetId: Int): PendingIntent {
-        val configIntent = Intent(context, ConfigActivity::class.java)
-        configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+        val configIntent = Intent(context, ConfigActivity::class.java).apply {
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+        }
 
         return PendingIntent.getActivity(
             context, 0, configIntent, 0
@@ -123,20 +124,19 @@ class DataFetcherWorker(context: Context, workerParams: WorkerParameters) : Work
     }
 
     private fun getServiceIntent(context: Context, appWidgetId: Int, json: String): Intent {
-        val serviceIntent = Intent(context, AppWidgetService::class.java)
-        serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-        serviceIntent.putExtra("json", json)
-        serviceIntent.data =
-            Uri.parse(serviceIntent.toUri(Intent.URI_INTENT_SCHEME))
-        return serviceIntent
+        return Intent(context, AppWidgetService::class.java).apply {
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+            putExtra("json", json)
+            data = Uri.parse(this.toUri(Intent.URI_INTENT_SCHEME))
+        }
     }
 
     private fun getHeader(): JSONObject {
-        val header = JSONObject()
-        header.put("itemTitle", "عنوان")
-        header.put("currentPrice", "قیمت")
-        header.put("priceChanges", "تغییر")
-        return header
+        return JSONObject().apply {
+            put("itemTitle", "عنوان")
+            put("currentPrice", "قیمت")
+            put("priceChanges", "تغییر")
+        }
     }
 
     private fun parseData(
@@ -150,15 +150,16 @@ class DataFetcherWorker(context: Context, workerParams: WorkerParameters) : Work
             val elements =
                 document.getElementsByAttributeValue("data-market-row", field.toString()).last()
 
-            val jsonObject = JSONObject()
-            jsonObject.put("itemTitle", elements.child(0).text())
-            jsonObject.put("currentPrice", elements.child(1).text())
-            jsonObject.put("priceChanges", elements.child(2).text())
-            jsonObject.put(
-                "changeIndicator", elements.child(2)
-                    .getElementsByTag("span")
-                    .attr("class")
-            )
+            val jsonObject = JSONObject().apply {
+                put("itemTitle", elements.child(0).text())
+                put("currentPrice", elements.child(1).text())
+                put("priceChanges", elements.child(2).text())
+                put(
+                    "changeIndicator", elements.child(2)
+                        .getElementsByTag("span")
+                        .attr("class")
+                )
+            }
             jsonArray.put(jsonObject)
         }
 

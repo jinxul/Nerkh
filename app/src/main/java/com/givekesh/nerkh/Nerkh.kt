@@ -43,47 +43,43 @@ class Nerkh : AppWidgetProvider() {
 
         for (appWidgetId in appWidgetIds) {
 
-            val remoteView = RemoteViews(context.packageName, R.layout.nerkh)
             val json =
                 context.assets.open("defaultJson.json").bufferedReader()
                     .use { it.readText() }
 
-            val serviceIntent = Intent(context, AppWidgetService::class.java)
-            serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-            serviceIntent.putExtra("json", json)
+            val serviceIntent = Intent(context, AppWidgetService::class.java).apply {
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                putExtra("json", json)
+                data = Uri.parse(this.toUri(Intent.URI_INTENT_SCHEME))
+            }
 
-            serviceIntent.data =
-                Uri.parse(serviceIntent.toUri(Intent.URI_INTENT_SCHEME))
-
-
-            val updateIntent = Intent(context, Nerkh::class.java)
-            updateIntent.action = actionRefresh
-            updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-
-
+            val updateIntent = Intent(context, Nerkh::class.java).apply {
+                action = actionRefresh
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+            }
             val pendingIntent = PendingIntent.getBroadcast(
                 context, appWidgetId,
                 updateIntent, PendingIntent.FLAG_UPDATE_CURRENT
             )
 
-            remoteView.setOnClickPendingIntent(
-                R.id.widget_refresh,
-                pendingIntent
-            )
-
-            val configIntent = Intent(context, ConfigActivity::class.java)
-            configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-
-
+            val configIntent = Intent(context, ConfigActivity::class.java).apply {
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+            }
             val configPendingIntent = PendingIntent.getActivity(
                 context, 0, configIntent, 0
             )
 
-            remoteView.setOnClickPendingIntent(R.id.widget_settings, configPendingIntent)
+            RemoteViews(context.packageName, R.layout.nerkh).apply {
+                setOnClickPendingIntent(
+                    R.id.widget_refresh,
+                    pendingIntent
+                )
+                setOnClickPendingIntent(R.id.widget_settings, configPendingIntent)
 
-            remoteView.setRemoteAdapter(R.id.widget_list, serviceIntent)
-            remoteView.setEmptyView(R.id.widget_list, R.id.empty_layout)
-            appWidgetManager.updateAppWidget(appWidgetId, remoteView)
+                setRemoteAdapter(R.id.widget_list, serviceIntent)
+                setEmptyView(R.id.widget_list, R.id.empty_layout)
+                appWidgetManager.updateAppWidget(appWidgetId, this)
+            }
         }
     }
 

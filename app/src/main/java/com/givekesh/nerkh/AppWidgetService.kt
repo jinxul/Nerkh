@@ -40,7 +40,6 @@ class ListViewRemoteViewsFactory(private val context: Context, private val items
     }
 
     override fun getViewAt(position: Int): RemoteViews {
-        val remoteView = RemoteViews(context.packageName, R.layout.nerkh_item)
         val listItem = items.getJSONObject(position)
         val changeIndicator = listItem.optString("changeIndicator", "")
         val color = when {
@@ -52,12 +51,13 @@ class ListViewRemoteViewsFactory(private val context: Context, private val items
             }
             else -> ContextCompat.getColor(context, R.color.light)
         }
-        remoteView.setTextViewText(R.id.title, listItem.optString("itemTitle", "---"))
-        remoteView.setTextViewText(R.id.price, listItem.optString("currentPrice", "---"))
-        remoteView.setTextViewText(R.id.changes, listItem.optString("priceChanges", "---"))
-        remoteView.setTextColor(R.id.price, color)
-        remoteView.setTextColor(R.id.changes, color)
-        return remoteView
+        return RemoteViews(context.packageName, R.layout.nerkh_item).apply {
+            setTextViewText(R.id.title, listItem.optString("itemTitle", "---"))
+            setTextViewText(R.id.price, listItem.optString("currentPrice", "---"))
+            setTextViewText(R.id.changes, listItem.optString("priceChanges", "---"))
+            setTextColor(R.id.price, color)
+            setTextColor(R.id.changes, color)
+        }
     }
 
     override fun getCount(): Int {
