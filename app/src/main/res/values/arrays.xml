@@ -1,10 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="fields">
-        <item>l-price_dollar_rl</item>
-        <item>l-ons</item>
-        <item>l-mesghal</item>
-        <item>l-geram18</item>
-        <item>l-sekee</item>
+    <string-array name="currencies">
+        <item>دلار</item>
+        <item>یورو</item>
+        <item>پوند انگلیس</item>
+        <item>درهم امارات</item>
+        <item>لیر ترکیه</item>
+        <item>فرانک سوئیس</item>
+        <item>یوان چین</item>
+        <item>ین زاپن</item>
+        <item>دلار کانادا</item>
+        <item>دلار استرالیا</item>
+        <item>دلار نیوزلند</item>
+        <item>دلار سنگاپور</item>
+        <item>روپیه هند</item>
+        <item>روپیه پاکستان</item>
+        <item>دینار عراق</item>
+        <item>کرون نروژ</item>
+        <item>کرون سوئد</item>
+        <item>کرون دانمارک</item>
+        <item>ریال عربستان</item>
+        <item>ریال قطر</item>
+        <item>ریال عمان</item>
+        <item>دینار کویت</item>
+        <item>دینار بحرین</item>
+        <item>رینگیت مالزی</item>
+        <item>بات تایلند</item>
+        <item>دلار هنگ کنگ</item>
+        <item>روبل روسیه</item>
+        <item>منات آذربایجان</item>
+        <item>درام ارمنستان</item>
+        <item>لاری گرجستان</item>
+        <item>افغانی</item>
+        <item>لیر سوریه</item>
+    </string-array>
+    <string-array name="currencies_values">
+        <item>price_dollar_rl</item>
+        <item>price_eur</item>
+        <item>price_gbp</item>
+        <item>price_aed</item>
+        <item>price_try</item>
+        <item>price_chf</item>
+        <item>price_cny</item>
+        <item>price_jpy</item>
+        <item>price_cad</item>
+        <item>price_aud</item>
+        <item>price_nzd</item>
+        <item>price_sgd</item>
+        <item>price_inr</item>
+        <item>price_pkr</item>
+        <item>price_iqd</item>
+        <item>price_nok</item>
+        <item>price_sek</item>
+        <item>price_dkk</item>
+        <item>price_sar</item>
+        <item>price_qar</item>
+        <item>price_omr</item>
+        <item>price_kwd</item>
+        <item>price_bhd</item>
+        <item>price_myr</item>
+        <item>price_thb</item>
+        <item>price_hkd</item>
+        <item>price_rub</item>
+        <item>price_azn</item>
+        <item>price_amd</item>
+        <item>price_gel</item>
+        <item>price_afn</item>
+        <item>price_syp</item>
+    </string-array>
+    <string-array name="currencies_default">
+        <item>price_dollar_rl</item>
+        <item>price_eur</item>
+    </string-array>
+
+    <string-array name="metals">
+        <item>انس طلا</item>
+        <item>مثقال طلا</item>
+        <item>طلا ۱۸</item>
+        <item>انس نقره</item>
+        <item>انس پلاتین</item>
+        <item>انس پالادیوم</item>
+        <item>طلای ۲۴ عیار</item>
+        <item>طلای ۱۸ عیار/۷۴۰</item>
+        <item>طلای دست دوم</item>
+        <item>آبشده نقدی</item>
+        <item>آبشده کمتر از کیلو</item>
+        <item>آبشده بنکداری</item>
+        <item>آبشده شنبه ای</item>
+    </string-array>
+    <string-array name="metals_values">
+        <item>ons</item>
+        <item>mesghal</item>
+        <item>geram18</item>
+        <item>silver</item>
+        <item>platinum</item>
+        <item>palladium</item>
+        <item>geram24</item>
+        <item>gold_740k</item>
+        <item>gold_mini_size</item>
+        <item>gold_futures</item>
+        <item>gold_world_futures</item>
+        <item>gold_melted_wholesale</item>
+        <item>gold_melted_transfer</item>
+    </string-array>
+    <string-array name="metals_default">
+        <item>ons</item>
+        <item>mesghal</item>
+        <item>geram18</item>
+    </string-array>
+
+    <string-array name="coins">
+        <item>سکه</item>
+        <item>سکه بهار آزادی</item>
+        <item>نیم سکه</item>
+        <item>ربع سکه</item>
+        <item>سکه گرمی</item>
+    </string-array>
+    <string-array name="coins_values">
+        <item>sekee</item>
+        <item>sekeb</item>
+        <item>nim</item>
+        <item>rob</item>
+        <item>gerami</item>
+    </string-array>
+    <string-array name="coins_default">
+        <item>sekee</item>
+    </string-array>
+
+    <string-array name="miscellaneous">
+        <item>بورس</item>
+        <item>نفت برنت</item>
+        <item>بیت کوین</item>
+    </string-array>
+    <string-array name="miscellaneous_values">
+        <item>boursex</item>
+        <item>oil_brent</item>
+        <item>crypto-bitcoin</item>
+    </string-array>
+    <string-array name="miscellaneous_default">
+        <item>boursex</item>
     </string-array>
 </resources>

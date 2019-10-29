@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.RemoteViews
+import androidx.preference.PreferenceManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.crashlytics.android.Crashlytics
@@ -14,10 +15,12 @@ import okhttp3.Request
 import org.json.JSONArray
 import org.json.JSONObject
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 
 class DataFetcherWorker(context: Context, workerParams: WorkerParameters) : Worker(
     context,
@@ -45,23 +48,7 @@ class DataFetcherWorker(context: Context, workerParams: WorkerParameters) : Work
                 .get().build()
             val html = okHttpClient.newCall(request).execute().body().string()
             val document = Jsoup.parse(html)
-            val jsonArray = JSONArray()
-            val header = JSONObject()
-            header.put("itemTitle", "عنوان")
-            header.put("currentPrice", "قیمت")
-            header.put("priceChanges", "تغییر")
-            jsonArray.put(header)
-
-            val fields = context.resources.getStringArray(R.array.fields)
-            for (field in fields) {
-                val elements = document.getElementById(field)
-                val jsonObject = JSONObject()
-                jsonObject.put("itemTitle", elements.child(0).text())
-                jsonObject.put("currentPrice", elements.child(1).text())
-                jsonObject.put("priceChanges", elements.child(2).text())
-                jsonObject.put("changeIndicator", elements.attr("class"))
-                jsonArray.put(jsonObject)
-            }
+            val jsonArray = parseData(context, document)
             if (jsonArray.length() > 1) {
                 val serviceIntent = getServiceIntent(context, appWidgetId, jsonArray.toString())
                 val lastUpdate = context.resources.getString(
@@ -103,6 +90,10 @@ class DataFetcherWorker(context: Context, workerParams: WorkerParameters) : Work
             R.id.widget_refresh,
             getRefreshPending(context, appWidgetId)
         )
+        remoteView.setOnClickPendingIntent(
+            R.id.widget_settings,
+            getConfigPending(context, appWidgetId)
+        )
         remoteView.setRemoteAdapter(R.id.widget_list, serviceIntent)
         remoteView.setEmptyView(R.id.widget_list, R.id.empty_layout)
         appWidgetManager.updateAppWidget(appWidgetId, remoteView)
@@ -122,6 +113,15 @@ class DataFetcherWorker(context: Context, workerParams: WorkerParameters) : Work
         )
     }
 
+    private fun getConfigPending(context: Context, appWidgetId: Int): PendingIntent {
+        val configIntent = Intent(context, ConfigActivity::class.java)
+        configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+
+        return PendingIntent.getActivity(
+            context, 0, configIntent, 0
+        )
+    }
+
     private fun getServiceIntent(context: Context, appWidgetId: Int, json: String): Intent {
         val serviceIntent = Intent(context, AppWidgetService::class.java)
         serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
@@ -129,5 +129,47 @@ class DataFetcherWorker(context: Context, workerParams: WorkerParameters) : Work
         serviceIntent.data =
             Uri.parse(serviceIntent.toUri(Intent.URI_INTENT_SCHEME))
         return serviceIntent
+    }
+
+    private fun getHeader(): JSONObject {
+        val header = JSONObject()
+        header.put("itemTitle", "عنوان")
+        header.put("currentPrice", "قیمت")
+        header.put("priceChanges", "تغییر")
+        return header
+    }
+
+    private fun parseData(
+        context: Context,
+        document: Document
+    ): JSONArray {
+        val jsonArray = JSONArray()
+        jsonArray.put(getHeader())
+
+        getFields(context).forEach { field ->
+            val elements =
+                document.getElementsByAttributeValue("data-market-row", field.toString()).last()
+
+            val jsonObject = JSONObject()
+            jsonObject.put("itemTitle", elements.child(0).text())
+            jsonObject.put("currentPrice", elements.child(1).text())
+            jsonObject.put("priceChanges", elements.child(2).text())
+            jsonObject.put(
+                "changeIndicator", elements.child(2)
+                    .getElementsByTag("span")
+                    .attr("class")
+            )
+            jsonArray.put(jsonObject)
+        }
+
+        return jsonArray
+    }
+
+    private fun getFields(context: Context): ArrayList<Any?> {
+        val fields = ArrayList<Any?>()
+        PreferenceManager.getDefaultSharedPreferences(context).all.forEach {
+            fields.addAll(it.value as Collection<*>)
+        }
+        return fields
     }
 }

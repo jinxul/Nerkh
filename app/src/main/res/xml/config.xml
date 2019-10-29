@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <MultiSelectListPreference
+        android:defaultValue="@array/currencies_default"
+        android:entries="@array/currencies"
+        android:entryValues="@array/currencies_values"
+        android:key="currency"
+        android:layout="@layout/pref_layout"
+        android:title="@string/currency" />
+
+    <MultiSelectListPreference
+        android:defaultValue="@array/coins_default"
+        android:entries="@array/coins"
+        android:entryValues="@array/coins_values"
+        android:key="coins"
+        android:layout="@layout/pref_layout"
+        android:title="@string/coin" />
+
+    <MultiSelectListPreference
+        android:defaultValue="@array/metals_default"
+        android:entries="@array/metals"
+        android:entryValues="@array/metals_values"
+        android:key="metals"
+        android:layout="@layout/pref_layout"
+        android:title="@string/metals" />
+
+    <MultiSelectListPreference
+        android:defaultValue="@array/miscellaneous_default"
+        android:entries="@array/miscellaneous"
+        android:entryValues="@array/miscellaneous_values"
+        android:key="miscellaneous"
+        android:layout="@layout/pref_layout"
+        android:title="@string/misc" />
+
+</PreferenceScreen>

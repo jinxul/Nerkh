@@ -5,6 +5,11 @@
     <string name="result_not_found">دریافت اطلاعات با خطا مواجه شد.</string>
     <string name="refresh">refresh</string>
     <string name="last_update">%1$s :آخرین دریافت</string>
-    <string name="loading">در حال دریافت اطلاعات...</string>
+    <string name="loading">در حال دریافت اطلاعات…</string>
     <string name="refresh_description">Manually refresh widget</string>
+    <string name="settings_description">Widget Configuration</string>
+    <string name="currency">ارز</string>
+    <string name="coin">سکه</string>
+    <string name="metals">فلزهای گران بها</string>
+    <string name="misc">سایر موارد</string>
 </resources>

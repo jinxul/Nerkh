@@ -6,4 +6,5 @@
     android:previewImage="@mipmap/ic_launcher"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="1800000"
-    android:widgetCategory="home_screen"/>
+    android:widgetCategory="home_screen"
+    android:configure="com.givekesh.nerkh.ConfigActivity"/>

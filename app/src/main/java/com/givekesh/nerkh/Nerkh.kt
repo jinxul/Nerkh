@@ -70,6 +70,17 @@ class Nerkh : AppWidgetProvider() {
                 R.id.widget_refresh,
                 pendingIntent
             )
+
+            val configIntent = Intent(context, ConfigActivity::class.java)
+            configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+
+
+            val configPendingIntent = PendingIntent.getActivity(
+                context, 0, configIntent, 0
+            )
+
+            remoteView.setOnClickPendingIntent(R.id.widget_settings, configPendingIntent)
+
             remoteView.setRemoteAdapter(R.id.widget_list, serviceIntent)
             remoteView.setEmptyView(R.id.widget_list, R.id.empty_layout)
             appWidgetManager.updateAppWidget(appWidgetId, remoteView)
