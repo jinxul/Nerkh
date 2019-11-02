@@ -1,13 +1,10 @@
 package com.givekesh.nerkh
 
-import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.widget.RemoteViews
 import androidx.work.*
 import java.util.concurrent.TimeUnit
 
@@ -47,39 +44,8 @@ class Nerkh : AppWidgetProvider() {
                 context.assets.open("defaultJson.json").bufferedReader()
                     .use { it.readText() }
 
-            val serviceIntent = Intent(context, AppWidgetService::class.java).apply {
-                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-                putExtra("json", json)
-                data = Uri.parse(this.toUri(Intent.URI_INTENT_SCHEME))
-            }
-
-            val updateIntent = Intent(context, Nerkh::class.java).apply {
-                action = actionRefresh
-                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-            }
-            val pendingIntent = PendingIntent.getBroadcast(
-                context, appWidgetId,
-                updateIntent, PendingIntent.FLAG_UPDATE_CURRENT
-            )
-
-            val configIntent = Intent(context, ConfigActivity::class.java).apply {
-                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-            }
-            val configPendingIntent = PendingIntent.getActivity(
-                context, 0, configIntent, 0
-            )
-
-            RemoteViews(context.packageName, R.layout.nerkh).apply {
-                setOnClickPendingIntent(
-                    R.id.widget_refresh,
-                    pendingIntent
-                )
-                setOnClickPendingIntent(R.id.widget_settings, configPendingIntent)
-
-                setRemoteAdapter(R.id.widget_list, serviceIntent)
-                setEmptyView(R.id.widget_list, R.id.empty_layout)
-                appWidgetManager.updateAppWidget(appWidgetId, this)
-            }
+            val utils = Utils(context, appWidgetId)
+            utils.refreshUI("", json, appWidgetManager)
         }
     }
 
