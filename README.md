@@ -3,6 +3,14 @@ Nerkh
 
 a simple widget for getting latest price of gold and foreign exchanges in iran.
 
+<img src="https://github.com/jinxul/Nerkh/blob/master/screenshots/nerkh_ui.png" width="280" height="140">
+
+
+Credit
+=================
+all the data is collected from http://www.tgju.org/
+
+
 License
 =======
 
