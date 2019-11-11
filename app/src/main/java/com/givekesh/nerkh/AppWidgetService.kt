@@ -2,6 +2,7 @@ package com.givekesh.nerkh
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import androidx.core.content.ContextCompat
@@ -49,14 +50,19 @@ class ListViewRemoteViewsFactory(private val context: Context, private val items
             changeIndicator.contains("high") -> {
                 ContextCompat.getColor(context, R.color.high)
             }
-            else -> ContextCompat.getColor(context, R.color.light)
+            else -> Color.BLACK
+        }
+        val backgroundColor = when {
+            position == 0 -> ContextCompat.getColor(context, R.color.header_bg)
+            position % 2 == 0 -> ContextCompat.getColor(context, R.color.item_bg)
+            else -> Color.WHITE
         }
         return RemoteViews(context.packageName, R.layout.nerkh_item).apply {
             setTextViewText(R.id.title, listItem.optString("itemTitle", "---"))
             setTextViewText(R.id.price, listItem.optString("currentPrice", "---"))
             setTextViewText(R.id.changes, listItem.optString("priceChanges", "---"))
-            setTextColor(R.id.price, color)
             setTextColor(R.id.changes, color)
+            setInt(R.id.nerkh_item_holder, "setBackgroundColor", backgroundColor)
         }
     }
 

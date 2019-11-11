@@ -3,7 +3,7 @@
     android:id="@+id/empty_layout"
     android:layout_width="match_parent"
     android:layout_height="150dp"
-    android:background="@color/grey"
+    android:background="@android:color/white"
     android:visibility="visible">
 
     <TextView
@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:text="@string/loading"
-        android:textColor="@color/light"
+        android:textColor="@android:color/black"
         android:textSize="@dimen/default_text_size" />
 
     <ProgressBar

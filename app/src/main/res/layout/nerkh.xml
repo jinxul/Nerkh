@@ -5,21 +5,18 @@
     android:layout_centerInParent="true"
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp"
-    android:background="@color/grey"
+    android:background="@android:color/transparent"
     android:layoutDirection="ltr"
-    android:paddingStart="4dp"
-    android:paddingLeft="4dp"
     android:paddingTop="6dp"
-    android:paddingEnd="6dp"
-    android:paddingRight="6dp"
     android:paddingBottom="2dp">
 
     <RelativeLayout
         android:id="@+id/header_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/grey"
+        android:background="@color/header_bg"
         android:paddingLeft="5dp"
+        android:paddingTop="6dp"
         android:paddingRight="5dp">
 
         <ImageView
@@ -35,8 +32,8 @@
             android:id="@+id/widget_refresh"
             android:layout_width="16dp"
             android:layout_height="16dp"
-            android:layout_marginLeft="6dp"
             android:layout_marginStart="6dp"
+            android:layout_marginLeft="6dp"
             android:layout_toRightOf="@id/widget_settings"
             android:contentDescription="@string/refresh_description"
             android:src="@drawable/ic_refresh" />
@@ -51,8 +48,8 @@
             android:layout_toRightOf="@id/widget_refresh"
             android:gravity="end"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/light"
-            android:textSize="@dimen/default_text_size" />
+            android:textColor="@android:color/black"
+            android:textSize="10sp" />
 
 
     </RelativeLayout>
@@ -62,10 +59,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/header_layout"
-        android:divider="@color/light"
-        android:dividerHeight="1px"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
+        android:divider="@android:color/white"
+        android:dividerHeight="1dp"
         tools:listitem="@layout/nerkh_item" />
 
     <include layout="@layout/loading" />
