@@ -5,6 +5,7 @@
         android:defaultValue="@array/currencies_default"
         android:entries="@array/currencies"
         android:entryValues="@array/currencies_values"
+        android:icon="@drawable/ic_bill"
         android:key="currency"
         android:layout="@layout/pref_layout"
         android:title="@string/currency" />
@@ -13,6 +14,7 @@
         android:defaultValue="@array/coins_default"
         android:entries="@array/coins"
         android:entryValues="@array/coins_values"
+        android:icon="@drawable/ic_coin"
         android:key="coins"
         android:layout="@layout/pref_layout"
         android:title="@string/coin" />
@@ -21,6 +23,7 @@
         android:defaultValue="@array/metals_default"
         android:entries="@array/metals"
         android:entryValues="@array/metals_values"
+        android:icon="@drawable/ic_gold"
         android:key="metals"
         android:layout="@layout/pref_layout"
         android:title="@string/metals" />
@@ -29,6 +32,7 @@
         android:defaultValue="@array/miscellaneous_default"
         android:entries="@array/miscellaneous"
         android:entryValues="@array/miscellaneous_values"
+        android:icon="@drawable/ic_bitcoin"
         android:key="miscellaneous"
         android:layout="@layout/pref_layout"
         android:title="@string/misc" />
