@@ -2,6 +2,7 @@ package com.givekesh.nerkh
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
@@ -80,7 +81,7 @@ class DataFetcherWorker(private val context: Context, workerParams: WorkerParame
 
         getFields().forEach { field ->
             val elements =
-                document.getElementsByAttributeValue("data-market-row", field.toString()).last()
+                document.getElementsByAttributeValue("data-market-row", field).last()
 
             val jsonObject = JSONObject().apply {
                 put("itemTitle", elements.child(0).text())
@@ -98,11 +99,27 @@ class DataFetcherWorker(private val context: Context, workerParams: WorkerParame
         return jsonArray
     }
 
-    private fun getFields(): ArrayList<Any?> {
-        val fields = ArrayList<Any?>()
-        PreferenceManager.getDefaultSharedPreferences(context).all.forEach {
-            fields.addAll(it.value as Collection<*>)
-        }
+    private fun getFields(): ArrayList<String> {
+        val fields = ArrayList<String>()
+        val pref = PreferenceManager.getDefaultSharedPreferences(context)
+
+        fields.addAll(getSortedSet(pref, "currency", R.array.currencies_values))
+        fields.addAll(getSortedSet(pref, "coins", R.array.coins_values))
+        fields.addAll(getSortedSet(pref, "metals", R.array.metals_values))
+        fields.addAll(getSortedSet(pref, "miscellaneous", R.array.miscellaneous_values))
+
         return fields
+    }
+
+    private fun getSortedSet(
+        pref: SharedPreferences,
+        key: String,
+        orderedArray: Int
+    ): Collection<String> {
+        val ordered = context.resources.getStringArray(orderedArray)
+        return (pref.getStringSet(
+            key,
+            HashSet<String>()
+        ) as Collection<String>).sortedBy { item -> ordered.indexOf(item) }
     }
 }
