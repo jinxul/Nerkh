@@ -29,6 +29,7 @@ class DataFetcherWorker(private val context: Context, workerParams: WorkerParame
         val appWidgetManager = AppWidgetManager.getInstance(context)
         val appWidgetId = inputData.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, 17987)
         val utils = Utils(context, appWidgetId)
+        val pref = PreferenceManager.getDefaultSharedPreferences(context)
 
         try {
             val url = "http://tgju.org/"
@@ -45,22 +46,23 @@ class DataFetcherWorker(private val context: Context, workerParams: WorkerParame
                 .get().build()
             val html = okHttpClient.newCall(request).execute().body().string()
             val document = Jsoup.parse(html)
-            val jsonArray = parseData(document)
+            val jsonArray = parseData(document, pref)
             if (jsonArray.length() > 1) {
                 val lastUpdate = context.resources.getString(
                     R.string.last_update,
                     SimpleDateFormat("hh:mm:ss a", Locale.US).format(Date())
                 )
                 utils.refreshUI(lastUpdate, jsonArray.toString(), appWidgetManager)
+                pref.edit().putString("cachedJson", jsonArray.toString()).apply()
+                pref.edit().putString("cachedTime", lastUpdate).apply()
                 return Result.success()
             }
         } catch (exception: Exception) {
             Crashlytics.logException(exception)
         }
-        val json =
-            context.assets.open("defaultJson.json").bufferedReader()
-                .use { it.readText() }
-        utils.refreshUI("", json, appWidgetManager)
+        val json = getCachedJson(pref)
+        val lastUpdate = getCachedTime(pref)
+        utils.refreshUI(lastUpdate, json, appWidgetManager)
         return Result.retry()
     }
 
@@ -74,12 +76,13 @@ class DataFetcherWorker(private val context: Context, workerParams: WorkerParame
     }
 
     private fun parseData(
-        document: Document
+        document: Document,
+        pref: SharedPreferences
     ): JSONArray {
         val jsonArray = JSONArray()
         jsonArray.put(getHeader())
 
-        getFields().forEach { field ->
+        getFields(pref).forEach { field ->
             val elements =
                 document.getElementsByAttributeValue("data-market-row", field).last()
 
@@ -99,9 +102,8 @@ class DataFetcherWorker(private val context: Context, workerParams: WorkerParame
         return jsonArray
     }
 
-    private fun getFields(): ArrayList<String> {
+    private fun getFields(pref: SharedPreferences): ArrayList<String> {
         val fields = ArrayList<String>()
-        val pref = PreferenceManager.getDefaultSharedPreferences(context)
 
         fields.addAll(getSortedSet(pref, "currency", R.array.currencies_values))
         fields.addAll(getSortedSet(pref, "coins", R.array.coins_values))
@@ -121,5 +123,16 @@ class DataFetcherWorker(private val context: Context, workerParams: WorkerParame
             key,
             HashSet<String>()
         ) as Collection<String>).sortedBy { item -> ordered.indexOf(item) }
+    }
+
+    private fun getCachedJson(pref: SharedPreferences): String {
+        val defaultJson = context.assets.open("defaultJson.json")
+            .bufferedReader()
+            .use { it.readText() }
+        return pref.getString("cachedJson", defaultJson).toString()
+    }
+
+    private fun getCachedTime(pref: SharedPreferences): String {
+        return pref.getString("cachedTime", "").toString()
     }
 }
