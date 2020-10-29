@@ -6,7 +6,7 @@ import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
@@ -44,7 +44,7 @@ class DataFetcherWorker(private val context: Context, workerParams: WorkerParame
                     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36"
                 )
                 .get().build()
-            val html = okHttpClient.newCall(request).execute().body().string()
+            val html = okHttpClient.newCall(request).execute().body()?.string()
             val document = Jsoup.parse(html)
             val jsonArray = parseData(document, pref)
             if (jsonArray.length() > 1) {
@@ -58,7 +58,7 @@ class DataFetcherWorker(private val context: Context, workerParams: WorkerParame
                 return Result.success()
             }
         } catch (exception: Exception) {
-            Crashlytics.logException(exception)
+            FirebaseCrashlytics.getInstance().recordException(exception)
         }
         val json = getCachedJson(pref)
         val lastUpdate = getCachedTime(pref)
